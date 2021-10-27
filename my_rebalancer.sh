@@ -2,7 +2,7 @@
 # A sample Bash script, by Hakuna
 #ToDo: 
 # Add selection process: https://ryanstutorials.net/bash-scripting-tutorial/bash-loops.php#select
-# Add if clauses: https://tecadmin.net/tutorial/bash-scripting/bash-if-else-statement/
+# to allow for selecting the fee-settings: fee-factor, fee-limit or fee-ppm-limit
 
 activate () {
   . ../.venv/bin/activate
@@ -13,7 +13,7 @@ helpFunction()
    echo "FUCK - something went wrong"
    echo "Usage: $0 -a parameterA -b parameterB -c parameterC"
    echo -e "\t-f For Fee-Factor parameterA"
-   echo -e "\t-d For Direction push (-f) or pull (-t) liquidity parameterB"
+   echo -e "\t-d For Direction push (f) or pull (t) liquidity parameterB"
    echo -e "\t-j Single channel ID of first and required channel"
    echo -e "\t-k-p arguments allow for passing additional optional channels to rebalance"
    exit 1 # Exit script after printing help
