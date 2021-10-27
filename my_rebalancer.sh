@@ -11,9 +11,9 @@ activate () {
 helpFunction()
 {
    echo "FUCK - something went wrong"
-   echo "Usage: $0 -a parameterA -b parameterB -c parameterC"
-   echo -e "\t-f For Fee-Factor parameterA"
-   echo -e "\t-d For Direction push (f) or pull (t) liquidity parameterB"
+   echo "Usage: $0 -f parameterF -d parameterD -j parameterJ"
+   echo -e "\t-f For Fee-Factor parameterF"
+   echo -e "\t-d For Direction push (f) or pull (t) liquidity parameterD"
    echo -e "\t-j Single channel ID of first and required channel"
    echo -e "\t-k-p arguments allow for passing additional optional channels to rebalance"
    exit 1 # Exit script after printing help
