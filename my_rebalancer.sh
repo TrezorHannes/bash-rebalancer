@@ -81,6 +81,7 @@ do
 		break
 	fi
 	echo "We'll go for --$feeoption"
+done
 
 # Begin script in case all parameters are correct
 echo "Fee Setting is\t\t\t\t> $feeoption"
@@ -101,7 +102,6 @@ rebalance_something $parameterJ 10 30 50 70
 if [ -z "$parameterK" ] 
 then
    	echo "We are done for now with Channel 1 concluding, Pleb";
-	done
 else
 	echo "Starting the rebalancing with Ratio $1 on Channel 2"
 	rebalance_something $parameterK 10 30 50 70
@@ -109,7 +109,6 @@ else
 	if [ -z "$parameterL" ]
 	then
         	echo "We are done for now with Channel 2 concluding, Pleb";
-		done
 	else 
         	echo "Starting the rebalancing with Ratio $1 on Channel 3"
 		rebalance_something $parameterL 10 30 50 70
@@ -117,7 +116,6 @@ else
 		if [ -z "$parameterM" ] 
 		then
 		        echo "We are done for now with Channel 3 concluding, Pleb";
-			done
 		else 
 		        echo "Starting the rebalancing with Ratio $1 on Channel 4"
 			rebalance_something $parameterM 10 30 50 70
@@ -125,7 +123,6 @@ else
 			if [ -z "$parameterN" ] 
 			then
 			        echo "We are done for now with Channel 4 concluding, Pleb";
-				done
 			else 
 			        echo "Starting the rebalancing with Ratio $1 on Channel 5"
 				rebalance_something $parameterN 10 30 50 70
@@ -133,7 +130,6 @@ else
 				if [ -z "$parameterO" ] 
 				then
 				        echo "We are done for now with Channel 5 concluding, Pleb";
-					done
 				else 
 				        echo "Starting the rebalancing with Ratio $1 on Channel 6"
 					rebalance_something $parameterO 10 30 50 70
@@ -141,7 +137,6 @@ else
 					if [ -z "$parameterP" ] 
 					then
 					        echo "We are done for now with Channel 6 concluding, Pleb";
-						done
 					else 
 					        echo "Starting the rebalancing with Ratio $1 on Channel 7"
 						rebalance_something $parameterP 10 30 50 70
@@ -152,5 +147,4 @@ else
 		fi
 	fi
 fi
-done
 echo "ALL DONE - move on Pleb!"
