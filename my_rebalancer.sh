@@ -54,13 +54,18 @@ then
 fi
 
 rebalance_something () {
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $2
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $3
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $4
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $5
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1
 
-# echo "python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $parameterF -$parameterD $1 -p $2"
+if [ $direction == 'Push' ]
+  then
+  direction='f'
+  else
+  direction='t'
+fi
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $2
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $3
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $4
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $5
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1
 }
 
 # Direction-Selection Process
@@ -73,7 +78,6 @@ rebalance_something () {
    echo -e ""
 
 directions='Push Pull'
-#while [ -z "$directions" ]
 PS3='Select Direction: '
 
 select direction in $directions
@@ -136,7 +140,7 @@ echo -e ""
 echo -e "===================================================================================================================================="
 echo "Fee Attribute > $feeoption"
 echo "Fee Value > $feevalue"
-echo "Direction Push (f) or Pull (t) > $direction"
+echo "Direction Push or Pull > $direction"
 echo ""
 echo "Channel ID 1 > $parameterJ"
 echo "Channel ID 2 > $parameterK"
@@ -154,10 +158,10 @@ PS3='Should we go ahead? '
 
 select kickoff in $kickoffs
 do
-#        if [ $kickoff == 'Cancel' ]
-#        then
-#                break
-#        fi
+        if [ $kickoff == 'Cancel' ]
+        then
+                break
+        fi
         echo ""
         echo "All right let's f'ing go 🚀"
         echo ""
