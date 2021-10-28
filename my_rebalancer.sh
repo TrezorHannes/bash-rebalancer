@@ -54,11 +54,11 @@ then
 fi
 
 rebalance_something () {
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $2
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $3
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $4
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $5
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $2
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $3
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $4
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1 -p $5
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$directions $1
 
 # echo "python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $parameterF -$parameterD $1 -p $2"
 }
