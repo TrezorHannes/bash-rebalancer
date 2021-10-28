@@ -19,23 +19,6 @@ else
 	LNPATH="~/.lnd/"
 fi
 
-# Fee-Selection Process
-   echo -e "\tFor fee-factor, set b/w 0.1 and 1.0. Compare the costs against the expected income, scaled by this factor. As an example, with --fee-factor 1.5, routes that cost at most 150% of the expected earnings are tried. Use values smaller than 1.0 to restrict routes to only consider those earning more/costing less. "
-   echo -e "\tFor fee-limit, enter total amount of Satoshis willing to spend per rebalance.  If set, only consider rebalance transactions that cost up to the given number of satoshis."
-   echo -e "\tIf set, only consider rebalance transactions that cost up to the given number of satoshis per 1M satoshis sent."
-   
-feeoptions='fee-factor fee-limit fee-ppm-limit Quit'
-
-HMT='Select Fee Option: '
-select feeoption in $feeoptions
-do
-	if [ $feeoption == 'Quit' ]
-	then
-		break
-	fi
-	echo "We'll go for --$feeoption"
-done
-
 helpFunction()
 {
    echo "FUCK - something went wrong"
@@ -92,6 +75,25 @@ rebalance_something () {
 echo "python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $parameterF -$parameterD $1 -p $2"
 }
 
+# Fee-Selection Process
+   echo -e "\tfee-factor: set b/w 0.1 and 1.0. Compare the costs against the expected income, scaled by this factor. As an example, with --fee-factor 1.5, routes that cost at most 150% of the expected earnings are tried. Use values smaller than 1.0 to restrict routes to only consider those earning more/costing less. "
+   
+   echo -e "\tfee-limit: enter total amount of Satoshis willing to spend per rebalance.  If set, only consider rebalance transactions that cost up to the given number of satoshis."
+   
+   echo -e "\tfee-ppm-limit: If set, only consider rebalance transactions that cost up to the given number of satoshis per 1M satoshis sent."
+   
+feeoptions='fee-factor fee-limit fee-ppm-limit Quit'
+
+PS3='Select Fee Option: '
+
+select feeoption in $feeoptions
+do
+	if [ $feeoption == 'Quit' ]
+	then
+		break
+	fi
+	echo "We'll go for --$feeoption"
+
 #Channel 1
 echo "Starting the rebalancing with Ratio $1 on Channel 1"
 rebalance_something $parameterJ 10 30 50 70
@@ -144,6 +146,5 @@ else
 		fi
 	fi
 fi
+done
 echo "ALL DONE - move on Pleb!"
-}
-
