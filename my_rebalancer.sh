@@ -2,11 +2,13 @@
 # A sample Bash script, by Hakuna
 #ToDo: 
 # 1) In case the below LND directory doesn't work for you, add a direct link in line 19 below
-# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not here ~/rebalance-lnd/ in line 22
+# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 25
 
 activate () {
   . ../.venv/bin/activate
+  source ~/venv/bin/activate
 }
+activate
 
 # Set LN-Path for Rebalance-LND
 if [ "`uname -a | grep umbrel`" != "" ]
@@ -36,8 +38,6 @@ helpFunction()
 while getopts "j:k:l:m:n:o:p:" opt
 do
    case "$opt" in
-#      f ) parameterF="$OPTARG" ;;
-#      d ) parameterD="$OPTARG" ;;
       j ) parameterJ="$OPTARG" ;;
       k ) parameterK="$OPTARG" ;;
       l ) parameterL="$OPTARG" ;;
