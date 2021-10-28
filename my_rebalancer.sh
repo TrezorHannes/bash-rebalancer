@@ -1,7 +1,8 @@
 #!/bin/bash
 # A sample Bash script, by Hakuna
 #ToDo: 
-# In case the below LND directory doesn't work for you, add a direct link in line 19 below
+# 1) In case the below LND directory doesn't work for you, add a direct link in line 19 below
+# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not here ~/rebalance-lnd/ in line 22
 
 activate () {
   . ../.venv/bin/activate
@@ -17,6 +18,9 @@ else
 # Set your own Path to LND in case the below does not work for you
         LNPATH="~/.lnd/"
 fi
+
+#Adjust this directory in case you installed Rebalance-LND somewhere different 
+RLND="~/rebalance-lnd/rebalance.py"
 
 helpFunction()
 {
@@ -60,11 +64,11 @@ if [ $direction == 'Push' ]
   else
   direction='t'
 fi
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $2
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $3
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $4
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $5
-        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -$direction $1
+        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $2
+        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $3
+        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $4
+        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $5
+        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1
 }
 
 # Direction-Selection Process
