@@ -11,7 +11,26 @@ It'll allow you to
   - Incrementally start the ratio to rebalance with **10%, 30%, 50%, 70%** and remainder ratio to rebalance*
   - For < 2M sats channels, the script will strive to achieve a 50:50 ratio. For > 2M Channel size, it'll aim to get 1M at either side
 
-###### Attributes
+#### Installation
+```
+$ git clone https://github.com/TrezorHannes/bash-rebalancer
+$ nano bash-rebalancer/my_rebalancer.sh
+```
+1) In case the below LND directory doesn't work for you, add a direct link in line 19 below
+2) Alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 25
+
+
+##### Syntax for one channel
+`$ ./bash-rebalancer/my_rebalancer.sh -j cidxxxxxxxxxxxxxxx`
+
+This command will try one _specific channel_ (j). 
+
+##### Syntax for more than one channel
+`$ ./bash-rebalancer/my_rebalancer.sh -j cidxxxxxxxxxxxxxxx -k cidxxxxxxxxxxxxxxx -l cidxxxxxxxxxxxxxxx -m cidxxxxxxxxxxxxxxx -n cidxxxxxxxxxxxxxxx -o cidxxxxxxxxxxxxxxx`
+
+This command will try to rebalance _for 6 different channels_ (j-o).
+
+#### Attributes
 ```
   - Fee-Setting
   - Direction push (👉) outbound or pull (👈) inbound liquidity
@@ -19,17 +38,7 @@ It'll allow you to
   - -k to -p arguments allow for passing additional optional channels to rebalance
  ```
 
-###### Syntax for one channel
-`$ ./my_rebalancer.sh -j cidxxxxxxxxxxxxxxx`
-
-This command will try one _specific channel_ (j). 
-
-###### Syntax for more than one channel
-`$ ./my_rebalancer.sh -j cidxxxxxxxxxxxxxxx -k cidxxxxxxxxxxxxxxx -l cidxxxxxxxxxxxxxxx -m cidxxxxxxxxxxxxxxx -n cidxxxxxxxxxxxxxxx -o cidxxxxxxxxxxxxxxx`
-
-This command will try to rebalance _for 6 different channels_ (j-o).
-
-###### Hints
+#### Hints
 1. Since the process is going to take a long time, pending the number of channels you like to rebalance, it's generally advised to **run the bash script via TMUX**.
 2. Get a list of target rebalancing channels with `$ lndmanage listchannels rebalance` before-hand, and identify the top 1-7 with too much outbound or too much inbound by hand
 3. Focus on the **channels with reasonable fee-settings**. When you use charge-lnd, you may have channels with extra-ordinary high or low pricing to dis- or encourage balancing. Fee-Factor for those channels can have undersirable side-effects (too high or too low ppm).
