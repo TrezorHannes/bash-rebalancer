@@ -53,18 +53,6 @@ then
    helpFunction
 fi
 
-# Begin script in case all parameters are correct
-echo "Fee Setting is\t\t\t\t> $feeoption"
-echo "Fee Factor is\t\t\t\t> $parameterF"
-echo "Direction Push (f) or Pull (t) is\t> $parameterD"
-echo "Channel ID 1 is\t\t\t\t> $parameterJ"
-echo "Channel ID 2 is\t\t\t\t> $parameterK"
-echo "Channel ID 3 is\t\t\t\t> $parameterL"
-echo "Channel ID 4 is\t\t\t\t> $parameterM"
-echo "Channel ID 5 is\t\t\t\t> $parameterN"
-echo "Channel ID 6 is\t\t\t\t> $parameterO"
-echo "Channel ID 7 is\t\t\t\t> $parameterP"
-
 rebalance_something () {
 
 #	python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --fee-factor $parameterF -$parameterD $1 -p $2
@@ -94,6 +82,18 @@ do
 	fi
 	echo "We'll go for --$feeoption"
 
+# Begin script in case all parameters are correct
+echo "Fee Setting is\t\t\t\t> $feeoption"
+echo "Fee Factor is\t\t\t\t> $parameterF"
+echo "Direction Push (f) or Pull (t) is\t> $parameterD"
+echo "Channel ID 1 is\t\t\t\t> $parameterJ"
+echo "Channel ID 2 is\t\t\t\t> $parameterK"
+echo "Channel ID 3 is\t\t\t\t> $parameterL"
+echo "Channel ID 4 is\t\t\t\t> $parameterM"
+echo "Channel ID 5 is\t\t\t\t> $parameterN"
+echo "Channel ID 6 is\t\t\t\t> $parameterO"
+echo "Channel ID 7 is\t\t\t\t> $parameterP"
+
 #Channel 1
 echo "Starting the rebalancing with Ratio $1 on Channel 1"
 rebalance_something $parameterJ 10 30 50 70
@@ -101,6 +101,7 @@ rebalance_something $parameterJ 10 30 50 70
 if [ -z "$parameterK" ] 
 then
    	echo "We are done for now with Channel 1 concluding, Pleb";
+	done
 else
 	echo "Starting the rebalancing with Ratio $1 on Channel 2"
 	rebalance_something $parameterK 10 30 50 70
@@ -108,6 +109,7 @@ else
 	if [ -z "$parameterL" ]
 	then
         	echo "We are done for now with Channel 2 concluding, Pleb";
+		done
 	else 
         	echo "Starting the rebalancing with Ratio $1 on Channel 3"
 		rebalance_something $parameterL 10 30 50 70
@@ -115,6 +117,7 @@ else
 		if [ -z "$parameterM" ] 
 		then
 		        echo "We are done for now with Channel 3 concluding, Pleb";
+			done
 		else 
 		        echo "Starting the rebalancing with Ratio $1 on Channel 4"
 			rebalance_something $parameterM 10 30 50 70
@@ -122,6 +125,7 @@ else
 			if [ -z "$parameterN" ] 
 			then
 			        echo "We are done for now with Channel 4 concluding, Pleb";
+				done
 			else 
 			        echo "Starting the rebalancing with Ratio $1 on Channel 5"
 				rebalance_something $parameterN 10 30 50 70
@@ -129,6 +133,7 @@ else
 				if [ -z "$parameterO" ] 
 				then
 				        echo "We are done for now with Channel 5 concluding, Pleb";
+					done
 				else 
 				        echo "Starting the rebalancing with Ratio $1 on Channel 6"
 					rebalance_something $parameterO 10 30 50 70
@@ -136,6 +141,7 @@ else
 					if [ -z "$parameterP" ] 
 					then
 					        echo "We are done for now with Channel 6 concluding, Pleb";
+						done
 					else 
 					        echo "Starting the rebalancing with Ratio $1 on Channel 7"
 						rebalance_something $parameterP 10 30 50 70
