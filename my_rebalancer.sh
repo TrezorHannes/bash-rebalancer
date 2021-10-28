@@ -21,7 +21,7 @@ fi
 
 helpFunction()
 {
-   echo "FUCK - something went wrong"
+   echo "FUCK $1 - something went wrong"
    echo "Usage: $0 -f parameterF -d parameterD -j parameterJ"
    echo -e "\t-f For Fee-Factor parameterF"
    echo -e "\t-d For Direction push (f) or pull (t) liquidity parameterD"
@@ -33,8 +33,8 @@ helpFunction()
 while getopts "j:k:l:m:n:o:p:" opt
 do
    case "$opt" in
-      f ) parameterF="$OPTARG" ;;
-      d ) parameterD="$OPTARG" ;;
+#      f ) parameterF="$OPTARG" ;;
+#      d ) parameterD="$OPTARG" ;;
       j ) parameterJ="$OPTARG" ;;
       k ) parameterK="$OPTARG" ;;
       l ) parameterL="$OPTARG" ;;
@@ -42,49 +42,55 @@ do
       n ) parameterN="$OPTARG" ;;
       o ) parameterO="$OPTARG" ;;
       p ) parameterP="$OPTARG" ;;
-      ? ) helpFunction ;; # Print helpFunction in case essential parameter is non-existent
+      ? ) helpFunction Oben ;; # Print helpFunction in case essential parameter is non-existent
    esac
 done
 
 # Print helpFunction in case parameters are empty
-# if [ -z "$parameterF" ] || [ -z "$parameterD" ] || [ -z "$parameterJ" ]
 if [ -z "$parameterJ" ]
 then
    echo "Required parameters are empty";
-   helpFunction
+   helpFunction Unten
 fi
 
 rebalance_something () {
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $2
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $3
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $4
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1 -p $5
+        python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $feevalue -directions $1
 
-#       python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --fee-factor $parameterF -$parameterD $1 -p $2
-#       python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --fee-factor $parameterF -$parameterD $1 -p $3
-#       python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --fee-factor $parameterF -$parameterD $1 -p $4
-#       python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --fee-factor $parameterF -$parameterD $1 -p $5
-#       python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --fee-factor $parameterF -$parameterD $1
-echo "python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $parameterF -$parameterD $1 -p $2"
+# echo "python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $parameterF -$parameterD $1 -p $2"
 }
 
 # Direction-Selection Process
+   echo -e "====================================================================================================================================" 
+   echo -e ""
    echo -e "\t You have successfully added one or more channels to be rebalanced. Now define where the liquidity should move to."
+   echo -e ""
    echo -e "\t - 👉 Pushing liquidity indicates low inbound, high amount of local outbound sats"
    echo -e "\t - 👈 Pulling liquidity indicates high inbound, low amount of local outbound sats"
-   
-directions='Push(f) Pull (t)'
+   echo -e ""
 
+directions='Push Pull'
+#while [ -z "$directions" ]
 PS3='Select Direction: '
 
 select direction in $directions
 do
-        echo "We'll go for --$direction"
-done 
+        echo "We'll go for $direction liquidity"
+break
+done
 
 # Fee-Selection Process
+   echo -e "===================================================================================================================================="
+   echo -e ""
    echo -e "\tfee-factor: set b/w 0.1 and 1.0. Compare the costs against the expected income, scaled by this factor. fee-factor 1.5, routes that cost at most 150% of the expected earnings"
    echo -e "\tfee-limit: enter total amount of Satoshis willing to spend per rebalance.  If set, only consider rebalance transactions that cost up to the given number of satoshis."
    echo -e "\tfee-ppm-limit: If set, only consider rebalance transactions that cost up to the given number of satoshis per 1M satoshis sent."
+   echo -e ""
 
-feeoptions='fee-factor fee-limit fee-ppm-limit Quit'
-
+feeoptions='fee-factor fee-limit fee-ppm-limit'
 PS3='Select Fee Option: '
 
 select feeoption in $feeoptions
@@ -93,38 +99,45 @@ do
 #        then
 #                break
 #        fi
-        echo "We'll go for --$feeoption"
-done 
+        echo "We'll go for $feeoption"
+break
+done
 
 # Fee-Value Process
+   echo -e "===================================================================================================================================="
+   echo -e ""
    echo -e "\t Indicate the price-ranges you want to allow as ceiling for your rebalance across all channels indicated. This is not error prone, read carefully"
    echo -e "\t - fee-factor:decimal set. Examples: 0.1 indicates rebalance for max 10% costs. 0.5 = 50%, 1.5 = 150%. Start low eg 0.5"
    echo -e "\t - fee-limit: total amount of satoshis per rebalance, eg. 30"
    echo -e "\t - fee-ppm-limit: fee-rate per million satoshis. Set to 200 will pay a max of 200 satoshis for every million satoshis rebalanced"
-   
+   echo -e ""
+
 if [ $feeoption == 'fee-factor' ]
 then
 echo "Enter your fee-factor setting as decimal (recommended between 0.1 and 1.5)"
 read feevalue
 else
-	if [ $feeoption == 'fee-limit' ]
-	then
-	echo "Enter your fee-limit setting as total number of sats per rebalance (eg 50)"
-	read feevalue
-	else
-		if [ $feeoption == 'fee-ppm-limit' ]
-		then
-		echo "Enter your fee-ppm-limit (eg 200 for 200ppm)"
-		read feevalue
-		fi
-	fi
+        if [ $feeoption == 'fee-limit' ]
+        then
+        echo "Enter your fee-limit setting as total number of sats per rebalance (eg 50)"
+        read feevalue
+        else
+                if [ $feeoption == 'fee-ppm-limit' ]
+                then
+                echo "Enter your fee-ppm-limit (eg 200 for 200ppm)"
+                read feevalue
+                fi
+        fi
 fi
-echo "We'll go for --$feevalue"
+echo "We'll go for $feevalue"
 
 # Parse parameters from the command initiation
+echo -e ""
+echo -e "===================================================================================================================================="
 echo "Fee Attribute > $feeoption"
 echo "Fee Value > $feevalue"
 echo "Direction Push (f) or Pull (t) > $direction"
+echo ""
 echo "Channel ID 1 > $parameterJ"
 echo "Channel ID 2 > $parameterK"
 echo "Channel ID 3 > $parameterL"
@@ -132,6 +145,8 @@ echo "Channel ID 4 > $parameterM"
 echo "Channel ID 5 > $parameterN"
 echo "Channel ID 6 > $parameterO"
 echo "Channel ID 7 > $parameterP"
+echo -e "===================================================================================================================================="
+echo -e ""
 
 kickoffs='Yes Cancel'
 
@@ -143,8 +158,11 @@ do
 #        then
 #                break
 #        fi
+        echo ""
         echo "All right let's f'ing go 🚀"
-done 
+        echo ""
+break
+done
 
 #Channel 1
 echo "Starting the rebalancing on Channel 1"
@@ -153,7 +171,6 @@ rebalance_something $parameterJ 10 30 50 70
 if [ -z "$parameterK" ] 
 then
         echo "We are done for now with Channel 1 concluding, Pleb";
-        break
 else
         echo "Starting the rebalancing on Channel 2"
         rebalance_something $parameterK 10 30 50 70
@@ -161,7 +178,6 @@ else
         if [ -z "$parameterL" ]
         then
                 echo "We are done for now with Channel 2 concluding, Pleb";
-                break
         else 
                 echo "Starting the rebalancing on Channel 3"
                 rebalance_something $parameterL 10 30 50 70
@@ -169,7 +185,6 @@ else
                 if [ -z "$parameterM" ] 
                 then
                         echo "We are done for now with Channel 3 concluding, Pleb";
-                        break
                 else 
                         echo "Starting the rebalancing on Channel 4"
                         rebalance_something $parameterM 10 30 50 70
@@ -177,7 +192,6 @@ else
                         if [ -z "$parameterN" ] 
                         then
                                 echo "We are done for now with Channel 4 concluding, Pleb";
-                                break
                         else 
                                 echo "Starting the rebalancing on Channel 5"
                                 rebalance_something $parameterN 10 30 50 70
@@ -185,7 +199,6 @@ else
                                 if [ -z "$parameterO" ] 
                                 then
                                         echo "We are done for now with Channel 5 concluding, Pleb";
-                                        break
                                 else 
                                         echo "Starting the rebalancing on Channel 6"
                                         rebalance_something $parameterO 10 30 50 70
@@ -193,7 +206,6 @@ else
                                         if [ -z "$parameterP" ] 
                                         then
                                                 echo "We are done for now with Channel 6 concluding, Pleb";
-                                                break
                                         else 
                                                 echo "Starting the rebalancing on Channel 7"
                                                 rebalance_something $parameterP 10 30 50 70
