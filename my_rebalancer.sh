@@ -1,8 +1,7 @@
 #!/bin/bash
 # A sample Bash script, by Hakuna
 #ToDo: 
-# Add selection process: https://ryanstutorials.net/bash-scripting-tutorial/bash-loops.php#select
-# to allow for selecting the fee-settings: fee-factor, fee-limit or fee-ppm-limit
+# In case the below LND directory doesn't work for you, add a direct link in line 19 below
 
 activate () {
   . ../.venv/bin/activate
