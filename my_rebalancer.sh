@@ -63,11 +63,20 @@ rebalance_something () {
 echo "python ~/rebalance-lnd/rebalance.py --lnddir $LNPATH --$feeoption $parameterF -$parameterD $1 -p $2"
 }
 
+# Parse parameters from the command initiation
+echo "Fee Attribute is\t\t\t\t> $parameterF"
+echo "Direction Push (f) or Pull (t) is\t> $parameterD"
+echo "Channel ID 1 is\t\t\t\t> $parameterJ"
+echo "Channel ID 2 is\t\t\t\t> $parameterK"
+echo "Channel ID 3 is\t\t\t\t> $parameterL"
+echo "Channel ID 4 is\t\t\t\t> $parameterM"
+echo "Channel ID 5 is\t\t\t\t> $parameterN"
+echo "Channel ID 6 is\t\t\t\t> $parameterO"
+echo "Channel ID 7 is\t\t\t\t> $parameterP"
+
 # Fee-Selection Process
-   echo -e "\tfee-factor: set b/w 0.1 and 1.0. Compare the costs against the expected income, scaled by this factor. As an example, with --fee-factor 1.5, routes that cost at most 150% of the expected earnings are tried. Use values smaller than 1.0 to restrict routes to only consider those earning more/costing less. "
-   
+   echo -e "\tfee-factor: set b/w 0.1 and 1.0. Compare the costs against the expected income, scaled by this factor. As an example, with --fee-factor 1.5, routes that cost at most 150% of the expected earnings are tried. Use values smaller than 1.0 to restrict routes to only consider those earning more/costing less. "   
    echo -e "\tfee-limit: enter total amount of Satoshis willing to spend per rebalance.  If set, only consider rebalance transactions that cost up to the given number of satoshis."
-   
    echo -e "\tfee-ppm-limit: If set, only consider rebalance transactions that cost up to the given number of satoshis per 1M satoshis sent."
    
 feeoptions='fee-factor fee-limit fee-ppm-limit Quit'
@@ -81,19 +90,6 @@ do
 		break
 	fi
 	echo "We'll go for --$feeoption"
-done
-
-# Begin script in case all parameters are correct
-echo "Fee Setting is\t\t\t\t> $feeoption"
-echo "Fee Factor is\t\t\t\t> $parameterF"
-echo "Direction Push (f) or Pull (t) is\t> $parameterD"
-echo "Channel ID 1 is\t\t\t\t> $parameterJ"
-echo "Channel ID 2 is\t\t\t\t> $parameterK"
-echo "Channel ID 3 is\t\t\t\t> $parameterL"
-echo "Channel ID 4 is\t\t\t\t> $parameterM"
-echo "Channel ID 5 is\t\t\t\t> $parameterN"
-echo "Channel ID 6 is\t\t\t\t> $parameterO"
-echo "Channel ID 7 is\t\t\t\t> $parameterP"
 
 #Channel 1
 echo "Starting the rebalancing with Ratio $1 on Channel 1"
@@ -147,4 +143,5 @@ else
 		fi
 	fi
 fi
+done
 echo "ALL DONE - move on Pleb!"
