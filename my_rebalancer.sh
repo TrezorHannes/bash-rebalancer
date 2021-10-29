@@ -80,7 +80,7 @@ fi
    echo -e "\t - 👈 Pulling liquidity indicates high inbound, low amount of local outbound sats"
    echo -e ""
 
-directions='Push Pull'
+directions='👉Push 👈Pull'
 PS3='Select Direction: '
 
 select direction in $directions
@@ -102,10 +102,6 @@ PS3='Select Fee Option: '
 
 select feeoption in $feeoptions
 do
-#        if [ $feeoption == 'Quit' ]
-#        then
-#                break
-#        fi
         echo "We'll go for $feeoption"
 break
 done
@@ -143,7 +139,7 @@ echo -e ""
 echo -e "===================================================================================================================================="
 echo "Fee Attribute > $feeoption"
 echo "Fee Value > $feevalue"
-echo "Direction Push or Pull > $direction"
+echo "Direction 👉Push or 👈Pull > $direction"
 echo ""
 echo "Channel ID 1 > $parameterJ"
 echo "Channel ID 2 > $parameterK"
@@ -155,7 +151,7 @@ echo "Channel ID 7 > $parameterP"
 echo -e "===================================================================================================================================="
 echo -e ""
 
-kickoffs='Yes Cancel'
+kickoffs='✅Yes ⛔Cancel'
 
 PS3='Should we go ahead? '
 
@@ -223,4 +219,4 @@ else
                 fi
         fi
 fi
-echo "ALL DONE - move on Pleb!"
+echo "ALL DONE ⚡ - move on Pleb!"
