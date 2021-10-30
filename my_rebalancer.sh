@@ -10,19 +10,19 @@ activate () {
 }
 activate
 
-# Set LN-Path for Rebalance-LND
+# Set LN-Path & Rebalance-LND
 if [ "`uname -a | grep umbrel`" != "" ]
 then 
         # LNPATH setting on umbrel
         LNPATH="~/umbrel/lnd/"
+        RLND="/home/umbrel/rebalance-lnd/rebalance.py"
 else
         #Other installations
 # Set your own Path to LND in case the below does not work for you
         LNPATH="~/.lnd/"
+        #Adjust this directory in case you installed Rebalance-LND somewhere different 
+        RLND="/home/admin/apps/rebalance-lnd/rebalance.py"
 fi
-
-#Adjust this directory in case you installed Rebalance-LND somewhere different 
-RLND="/home/umbrel/rebalance-lnd/rebalance.py"
 
 helpFunction()
 {
@@ -70,6 +70,62 @@ fi
         python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $4
         python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $5
         python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1
+}
+
+rebalance_start()
+{
+#Channel 1
+echo "Starting the rebalancing on Channel 1"
+rebalance_something $parameterJ 10 30 50 70
+
+if [ -z "$parameterK" ]
+then
+        echo "We are done for now with Channel 1 concluding, Pleb";
+else
+        echo "Starting the rebalancing on Channel 2"
+        rebalance_something $parameterK 10 30 50 70
+
+        if [ -z "$parameterL" ]
+        then
+                echo "We are done for now with Channel 2 concluding, Pleb";
+        else
+                echo "Starting the rebalancing on Channel 3"
+                rebalance_something $parameterL 10 30 50 70
+
+                if [ -z "$parameterM" ]
+                then
+                        echo "We are done for now with Channel 3 concluding, Pleb";
+                else
+                        echo "Starting the rebalancing on Channel 4"
+                        rebalance_something $parameterM 10 30 50 70
+
+                        if [ -z "$parameterN" ]
+                        then
+                                echo "We are done for now with Channel 4 concluding, Pleb";
+                        else
+                                echo "Starting the rebalancing on Channel 5"
+                                rebalance_something $parameterN 10 30 50 70
+
+                                if [ -z "$parameterO" ]
+                                then
+                                        echo "We are done for now with Channel 5 concluding, Pleb";
+                                else
+                                        echo "Starting the rebalancing on Channel 6"
+                                        rebalance_something $parameterO 10 30 50 70
+
+                                        if [ -z "$parameterP" ]
+                                        then
+                                                echo "We are done for now with Channel 6 concluding, Pleb";
+                                        else
+                                                echo "Starting the rebalancing on Channel 7"
+                                                rebalance_something $parameterP 10 30 50 70
+
+                                        fi
+                                fi
+                        fi
+                fi
+        fi
+fi
 }
 
 # Direction-Selection Process
@@ -158,7 +214,7 @@ PS3='Should we go ahead? '
 
 select kickoff in $kickoffs
 do
-        if [ $kickoff == 'Cancel' ]
+        if [ $kickoff == '⛔Cancel' ]
         then
                 echo "kthxbuy - exiting"
                 break
@@ -167,63 +223,7 @@ do
         echo "All right let's f'ing go 🚀"
         echo ""
         rebalance_start
+        echo "ALL DONE ⚡ - move on Pleb!"
         fi
 break
 done
-
-rebalance_start() 
-{
-#Channel 1
-echo "Starting the rebalancing on Channel 1"
-rebalance_something $parameterJ 10 30 50 70
-
-if [ -z "$parameterK" ] 
-then
-        echo "We are done for now with Channel 1 concluding, Pleb";
-else
-        echo "Starting the rebalancing on Channel 2"
-        rebalance_something $parameterK 10 30 50 70
-
-        if [ -z "$parameterL" ]
-        then
-                echo "We are done for now with Channel 2 concluding, Pleb";
-        else 
-                echo "Starting the rebalancing on Channel 3"
-                rebalance_something $parameterL 10 30 50 70
-
-                if [ -z "$parameterM" ] 
-                then
-                        echo "We are done for now with Channel 3 concluding, Pleb";
-                else 
-                        echo "Starting the rebalancing on Channel 4"
-                        rebalance_something $parameterM 10 30 50 70
-
-                        if [ -z "$parameterN" ] 
-                        then
-                                echo "We are done for now with Channel 4 concluding, Pleb";
-                        else 
-                                echo "Starting the rebalancing on Channel 5"
-                                rebalance_something $parameterN 10 30 50 70
-
-                                if [ -z "$parameterO" ] 
-                                then
-                                        echo "We are done for now with Channel 5 concluding, Pleb";
-                                else 
-                                        echo "Starting the rebalancing on Channel 6"
-                                        rebalance_something $parameterO 10 30 50 70
-
-                                        if [ -z "$parameterP" ] 
-                                        then
-                                                echo "We are done for now with Channel 6 concluding, Pleb";
-                                        else 
-                                                echo "Starting the rebalancing on Channel 7"
-                                                rebalance_something $parameterP 10 30 50 70
-
-                                        fi
-                                fi
-                        fi
-                fi
-        fi
-fi
-}
-echo "ALL DONE ⚡ - move on Pleb!"
