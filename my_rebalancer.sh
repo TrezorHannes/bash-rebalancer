@@ -160,13 +160,14 @@ select kickoff in $kickoffs
 do
         if [ $kickoff == 'Cancel' ]
         then
-                break
                 echo "kthxbuy - exiting"
-        fi
+                break
+        else
         echo ""
         echo "All right let's f'ing go 🚀"
         echo ""
         rebalance_start
+        fi
 break
 done
 
