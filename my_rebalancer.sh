@@ -59,7 +59,7 @@ fi
 rebalance_something () 
 {
 
-if [ $direction == 'Push' ]
+if [ $direction == '👉Push' ]
   then
   direction='f'
   else
