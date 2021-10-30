@@ -22,7 +22,7 @@ else
 fi
 
 #Adjust this directory in case you installed Rebalance-LND somewhere different 
-RLND="~/rebalance-lnd/rebalance.py"
+RLND="/home/umbrel/rebalance-lnd/rebalance.py"
 
 helpFunction()
 {
@@ -56,7 +56,8 @@ then
    helpFunction Unten
 fi
 
-rebalance_something () {
+rebalance_something () 
+{
 
 if [ $direction == 'Push' ]
   then
@@ -160,13 +161,17 @@ do
         if [ $kickoff == 'Cancel' ]
         then
                 break
+                echo "kthxbuy - exiting"
         fi
         echo ""
         echo "All right let's f'ing go 🚀"
         echo ""
+        rebalance_start
 break
 done
 
+rebalance_start() 
+{
 #Channel 1
 echo "Starting the rebalancing on Channel 1"
 rebalance_something $parameterJ 10 30 50 70
@@ -219,4 +224,5 @@ else
                 fi
         fi
 fi
+}
 echo "ALL DONE ⚡ - move on Pleb!"
