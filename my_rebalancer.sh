@@ -1,8 +1,8 @@
 #!/bin/bash
 # A sample Bash script, by Hakuna
 #ToDo: 
-# 1) In case the below LND directory doesn't work for you, add a direct link in line 19 below
-# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 25
+# 1) In case the below LND directory doesn't work for you, add a direct link in line 22
+# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 18 (umbrel) or line 24 (!umbrel)
 
 activate () {
   . ../.venv/bin/activate
