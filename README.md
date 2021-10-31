@@ -16,8 +16,8 @@ It'll allow you to
 $ git clone https://github.com/TrezorHannes/bash-rebalancer
 $ nano bash-rebalancer/my_rebalancer.sh
 ```
-1) Adjust LND directory in line 19
-2) Alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 25
+1) In case the LND directory doesn't work for you, add a direct link in line 22
+2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 18 (umbrel) or line 24 (not umbrel)
 
 
 ##### Syntax for one channel
