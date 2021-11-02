@@ -1,5 +1,6 @@
 # bash-rebalancer
 With bash-rebalancer as a wrapper, you can use Carsten Otto's rebalance-lnd with > more than one channel in a batch system.
+It'll allow to add a bunch of channels when calling the script, and then a menu will guide you through the next steps.
 
 The prerequisits are
   - Installed Python Environment
