@@ -9,7 +9,8 @@ The prerequisits are
 
 It'll allow you to
   - Add **more than one channel** to rebalance
-  - Incrementally start the ratio to rebalance with **10%, 30%, 50%, 70%** and remainder ratio to rebalance*
+  - Incrementally start the ratio to rebalance with **10%, 30%, 50%, 70%** and remainder ratio to rebalance
+  - Alternatively, it allows you set a fixed amount of satoshis, and tries that _amount_ divided into 5 attempts
   - For < 2M sats channels, the script will strive to achieve a 50:50 ratio. For > 2M Channel size, it'll aim to get 1M at either side
 
 ### Installation
