@@ -37,6 +37,7 @@ This command will try to rebalance _for 6 different channels_ (j-o).
   - Direction push (👉) outbound or pull (👈) inbound liquidity
   - -j Single channel ID of first and required channel
   - -k to -p arguments allow for passing additional optional channels to rebalance
+  - Specify Automated or Defined Amount to be rebalanced
  ```
 
 ### Hints
