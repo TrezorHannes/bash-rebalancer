@@ -27,9 +27,7 @@ fi
 helpFunction()
 {
    echo "FUCK $1 - something went wrong"
-   echo "Usage: $0 -f parameterF -d parameterD -j parameterJ"
-   echo -e "\t-f For Fee-Factor parameterF"
-   echo -e "\t-d For Direction push (f) or pull (t) liquidity parameterD"
+   echo "Usage: $0 -j <CHAN-ID1> -k <CHAN-ID2> -l <CHAN-ID3> ..."
    echo -e "\t-j Single channel ID of first and required channel"
    echo -e "\t-k-p arguments allow for passing additional optional channels to rebalance"
    exit 1 # Exit script after printing help
@@ -53,7 +51,7 @@ done
 if [ -z "$parameterJ" ]
 then
    echo "Required parameters are empty";
-   helpFunction Unten
+   helpFunction
 fi
 
 rebalance_something () 
@@ -218,6 +216,7 @@ do
         then
                 echo "kthxbuy - exiting"
                 break
+                exit 1
         else
         echo ""
         echo "All right let's f'ing go 🚀"
