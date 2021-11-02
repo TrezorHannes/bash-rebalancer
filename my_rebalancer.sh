@@ -1,28 +1,35 @@
 #!/bin/bash
 # A sample Bash script, by Hakuna
-#ToDo: 
-# 1) In case the below LND directory doesn't work for you, add a direct link in line 22
-# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 18 (umbrel) or line 24 (!umbrel)
+#ToDo:
+# 1) In case the below LND directory doesn't work for you, add a direct link in line 18
+# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 13 (umbrel) or line 19 (!umbrel)
 
-activate () {
-  . ../.venv/bin/activate
-  source ~/venv/bin/activate
-}
-activate
 
 # Set LN-Path & Rebalance-LND
 if [ "`uname -a | grep umbrel`" != "" ]
-then 
+then
         # LNPATH setting on umbrel
         LNPATH="~/umbrel/lnd/"
         RLND="/home/umbrel/rebalance-lnd/rebalance.py"
+        umbrel=1
 else
         #Other installations
 # Set your own Path to LND in case the below does not work for you
         LNPATH="~/.lnd/"
-        #Adjust this directory in case you installed Rebalance-LND somewhere different 
+        #Adjust this directory in case you installed Rebalance-LND somewhere different
         RLND="/home/admin/apps/rebalance-lnd/rebalance.py"
+        umbrel=0
 fi
+
+activate () {
+if [ $umbrel=1 ]
+then
+        source ~/venv/bin/activate
+else
+        . ../.venv/bin/activate
+fi
+}
+activate
 
 helpFunction()
 {
@@ -54,7 +61,7 @@ then
    helpFunction
 fi
 
-rebalance_something () 
+rebalance_something ()
 {
 
 if [ $direction == '👉Push' ]
@@ -63,18 +70,27 @@ if [ $direction == '👉Push' ]
   else
   direction='t'
 fi
+if [ $amountoption == 'Defined' ]
+  then
+  let a=$amountvalue/5
+	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
+	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
+	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
+	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
+	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
+  else
         python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $2
         python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $3
         python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $4
         python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $5
-        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1
+fi
 }
 
 rebalance_start()
 {
 #Channel 1
 echo "Starting the rebalancing on Channel 1"
-rebalance_something $parameterJ 10 30 50 70
+rebalance_something $parameterJ 10 30 50 70 #adjust string for function to pick up -a or -p
 
 if [ -z "$parameterK" ]
 then
@@ -127,9 +143,9 @@ fi
 }
 
 # Direction-Selection Process
-   echo -e "====================================================================================================================================" 
    echo -e ""
-   echo -e "\t You have successfully added one or more channels to be rebalanced. Now define where the liquidity should move to."
+   echo -e "[DIRECTION-SELECTION PROCESS]======================================================================================================="
+   echo -e "You have successfully added one or more channels to be rebalanced. Now define where the liquidity should move to."
    echo -e ""
    echo -e "\t - 👉 Pushing liquidity indicates low inbound, high amount of local outbound sats"
    echo -e "\t - 👈 Pulling liquidity indicates high inbound, low amount of local outbound sats"
@@ -145,7 +161,9 @@ break
 done
 
 # Fee-Selection Process
-   echo -e "===================================================================================================================================="
+   echo -e ""
+   echo -e "[FEE-SELECTION PROCESS]============================================================================================================="
+   echo -e "Rebalance-LND offers 3 ways to set the price-ceiling for your rebalance. Chose one of three different options below."
    echo -e ""
    echo -e "\tfee-factor: set b/w 0.1 and 1.0. Compare the costs against the expected income, scaled by this factor. fee-factor 1.5, routes that cost at most 150% of the expected earnings"
    echo -e "\tfee-limit: enter total amount of Satoshis willing to spend per rebalance.  If set, only consider rebalance transactions that cost up to the given number of satoshis."
@@ -162,10 +180,12 @@ break
 done
 
 # Fee-Value Process
-   echo -e "===================================================================================================================================="
    echo -e ""
-   echo -e "\t Indicate the price-ranges you want to allow as ceiling for your rebalance across all channels indicated. This is not error prone, read carefully"
-   echo -e "\t - fee-factor:decimal set. Examples: 0.1 indicates rebalance for max 10% costs. 0.5 = 50%, 1.5 = 150%. Start low eg 0.5"
+   echo -e "[FEE-VALUE]========================================================================================================================="
+   echo -e "Economically viable pricing your rebalance-action is important!"
+   echo -e "Indicate the price-ranges you want to allow as ceiling for your rebalance across all channels indicated. This is not error prone, read carefully"
+   echo -e ""
+   echo -e "\t - fee-factor: decimal set. Examples: 0.1 indicates rebalance for max 10% costs. 0.5 = 50%, 1.5 = 150%. Start low eg 0.5"
    echo -e "\t - fee-limit: total amount of satoshis per rebalance, eg. 30"
    echo -e "\t - fee-ppm-limit: fee-rate per million satoshis. Set to 200 will pay a max of 200 satoshis for every million satoshis rebalanced"
    echo -e ""
@@ -189,20 +209,52 @@ else
 fi
 echo "We'll go for $feevalue"
 
+# Amount-Definition Process
+   echo -e ""
+   echo -e "[AMOUNT-SELECTION PROCESS]==========================================================================================================="
+   echo -e "Now lastly, let's determine the girth: Do you want the Script to take over how much to rebalance, or want to specify the size?"
+   echo -e ""
+   echo -e "\tAutomated: The script will aim for 5 steps to get your channel to 50:50 balance, or 1M on either side for channels bigger > 2M satoshis"
+   echo -e "\tDefined: You aim to rebalance a defined amount satoshis. It'll be divided into 5 chunks, since smaller sizes usually rebalance easier "
+   echo -e ""
+   echo -e "Please note: In case you called > more than one channel to rebalance, the second option "Defined" will be tried for ALL channels given"
+   echo -e ""
+
+amountoptions='Automated Defined'
+PS3='Select Amount Option: '
+
+select amountoption in $amountoptions
+do
+        echo "We'll go for $amountoption"
+break
+done
+
+if [ $amountoption == 'Defined' ]
+  then
+  echo "How much do you want to $direction? Enter the absolute amount in Satoshis, eg 1000000"
+  read amountvalue
+  else
+  amountvalue=''
+#  break
+fi
+
 # Parse parameters from the command initiation
 echo -e ""
-echo -e "===================================================================================================================================="
-echo "Fee Attribute > $feeoption"
-echo "Fee Value > $feevalue"
-echo "Direction 👉Push or 👈Pull > $direction"
-echo ""
-echo "Channel ID 1 > $parameterJ"
-echo "Channel ID 2 > $parameterK"
-echo "Channel ID 3 > $parameterL"
-echo "Channel ID 4 > $parameterM"
-echo "Channel ID 5 > $parameterN"
-echo "Channel ID 6 > $parameterO"
-echo "Channel ID 7 > $parameterP"
+echo -e "[SUMMARY]==========================================================================================================================="
+echo -e "Fee Attribute > \t\t $feeoption"
+echo -e "Fee Value > \t\t\t $feevalue"
+echo -e "Direction 👉Push or 👈Pull > \t $direction"
+echo -e "Amount-Definition > \t\t $amountoption $amountvalue"
+
+
+echo -e ""
+echo -e "Channel ID 1 > \t\t\t $parameterJ"
+echo -e "Channel ID 2 > \t\t\t $parameterK"
+echo -e "Channel ID 3 > \t\t\t $parameterL"
+echo -e "Channel ID 4 > \t\t\t $parameterM"
+echo -e "Channel ID 5 > \t\t\t $parameterN"
+echo -e "Channel ID 6 > \t\t\t $parameterO"
+echo -e "Channel ID 7 > \t\t\t $parameterP"
 echo -e "===================================================================================================================================="
 echo -e ""
 
