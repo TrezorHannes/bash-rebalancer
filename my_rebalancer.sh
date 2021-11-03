@@ -63,27 +63,20 @@ fi
 
 rebalance_something ()
 {
-
-if [ $direction == '👉Push' ]
-  then
-  direction='f'
-  else
-  direction='t'
-fi
-if [ $amountoption == 'Defined' ]
-  then
-  let a=$amountvalue/5
-	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
-	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
-	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
-	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
-	python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -a $a
-  else
-        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $2
-        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $3
-        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $4
-        python $RLND --lnddir $LNPATH --$feeoption $feevalue -$direction $1 -p $5
-fi
+	if [ $amountoption == 'Defined' ]
+  	then
+  	let a=$amountvalue/5
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
+  	else
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $2
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $3
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $4
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $5
+	fi
 }
 
 rebalance_start()
@@ -157,6 +150,12 @@ PS3='Select Direction: '
 select direction in $directions
 do
         echo "We'll go for $direction liquidity"
+	if [ $direction == '👉Push' ]
+  	then
+  	directionabrv='f'
+  	else
+  	directionabrv='t'
+	fi
 break
 done
 
