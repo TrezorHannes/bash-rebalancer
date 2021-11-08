@@ -5,7 +5,10 @@ It'll allow to add a bunch of channels when calling the script, and then a menu 
 The prerequisits are
   - Installed Python Environment
   - Rebalance-lnd https://github.com/C-Otto/rebalance-lnd
-  - LNDManage https://github.com/bitromortac/lndmanage
+  
+Optional but helpful to retrieve the right channels to rebalance
+  - LNDManage https://github.com/bitromortac/lndmanage 
+  `lndmanage listchannels rebalance`
 
 ### Key Feature Set
   - Add **more than one channel** to rebalance
