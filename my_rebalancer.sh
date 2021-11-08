@@ -13,8 +13,7 @@ then
         RLND="/home/umbrel/rebalance-lnd/rebalance.py"
         umbrel=1
 else
-        #Other installations
-# Set your own Path to LND in case the below does not work for you
+	#Other installations: Set your own Path to LND in case the below does not work for you
         LNPATH="~/.lnd/"
         #Adjust this directory in case you installed Rebalance-LND somewhere different
         RLND="/home/admin/apps/rebalance-lnd/rebalance.py"
@@ -265,7 +264,7 @@ select kickoff in $kickoffs
 do
         if [ $kickoff == '⛔Cancel' ]
         then
-                echo "kthxbuy - exiting"
+                echo "kthxbye - exiting"
                 break
                 exit 1
         else
