@@ -21,7 +21,7 @@ else
 fi
 
 activate () {
-if [ $umbrel=1 ]
+if [ $umbrel -eq 1 ]
 then
         source ~/venv/bin/activate
 else
@@ -75,6 +75,7 @@ rebalance_something ()
 		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $3
 		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $4
 		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $5
+		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1
 	fi
 }
 
