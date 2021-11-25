@@ -1,11 +1,13 @@
 #!/bin/bash
-# A sample Bash script, by Hakuna
-#ToDo:
-# 1) In case the below LND directory doesn't work for you, add a direct link in line 18
-# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 13 (umbrel) or line 19 (!umbrel)
+# A Rebalancing Bash script, by Hakuna
+#ToDo: i) Add fee-ppm-limit && fee-factor combination ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls
 
 
-# Set LN-Path & Rebalance-LND
+#**********[HEADER / SETTINGS SECTION]***************************************************************************************************
+reblance_cycle=5  # for defined amount of parts to try rebalancing. Will be more intuitively added  in next version
+# 1) In case the below LND directory doesn't work for you, add a direct link in line 20
+# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 16 (umbrel) or line 22 (!umbrel)
+
 if [ "`uname -a | grep umbrel`" != "" ]
 then
         # LNPATH setting on umbrel
@@ -16,12 +18,13 @@ else
 	#Other installations: Set your own Path to LND in case the below does not work for you
         LNPATH="~/.lnd/"
         #Adjust this directory in case you installed Rebalance-LND somewhere different
-        RLND="/home/admin/apps/rebalance-lnd/rebalance.py"
+        RLND="/home/admin/rebalance-lnd/rebalance.py"
         umbrel=0
 fi
 
-activate () {
-if [ $umbrel -eq 1 ]
+activate()
+{
+if [ $umbrel=1 ]
 then
         source ~/venv/bin/activate
 else
@@ -53,37 +56,52 @@ do
    esac
 done
 
-# Print helpFunction in case parameters are empty
 if [ -z "$parameterJ" ]
 then
    echo "Required parameters are empty";
    helpFunction
 fi
 
-rebalance_something ()
+rebalance_something()
 {
 	if [ $amountoption == 'Defined' ]
   	then
-  	let a=$amountvalue/5
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a
+	trial_counter=1
+        let a=$(( $amountvalue / $reblance_cycle ))
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a"
+		while [ $trial_counter -le $reblance_cycle ]
+  		do
+			if [ -z "$feemax" ]
+			then
+		$rebalance_dat
+			else
+		$rebalance_dat --fee-ppm-limit $feemax
+			fi
+		((trial_counter++))
+		done
   	else
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $2
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $3
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $4
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -p $5
-		python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1"
+			if [ -z "$feemax" ]
+			then
+		$rebalance_dat -p $2
+		$rebalance_dat -p $3
+		$rebalance_dat -p $4
+		$rebalance_dat -p $5
+		$rebalance_dat
+			else
+		$rebalance_dat -p $2 --fee-ppm-limit $feemax
+		$rebalance_dat -p $3 --fee-ppm-limit $feemax
+		$rebalance_dat -p $4 --fee-ppm-limit $feemax
+		$rebalance_dat -p $5 --fee-ppm-limit $feemax
+		$rebalance_dat --fee-ppm-limit $feemax
+			fi
 	fi
 }
 
 rebalance_start()
 {
-#Channel 1
 echo "Starting the rebalancing on Channel 1"
-rebalance_something $parameterJ 10 30 50 70 #adjust string for function to pick up -a or -p
+rebalance_something $parameterJ 10 30 50 70
 
 if [ -z "$parameterK" ]
 then
@@ -208,6 +226,24 @@ else
 fi
 echo "We'll go for $feevalue"
 
+if [ $feeoption == 'fee-factor' ]
+then
+   echo -e ""
+   echo -e "[FEE-FACTOR]========================================================================================================================="
+   echo -e "Under some circumstances, Fee-Factor may compute a too high profit, eg if you use extreme high fees to stop routing"
+   echo -e "To prevent routing from those channels with extremely high fees, you can add an additional PPM-limit as ceiling here."
+   echo -e "This will allow the rebalance to only consider profitable routes with fee-factor, but install a max-limit in combination"
+   echo -e ""
+   echo -e "\t - fee-ppm-limit: enter fee-rate per million satoshis. Set to 200 will set max 200 satoshis for every million satoshis rebalanced"
+   echo -e "\t - Set to 3000 or something if you don't care"
+   echo -e ""
+
+
+echo "Enter your fee-ppm-limit (eg 200 for 200ppm)"
+read feemax
+fi
+echo "We'll add a ceiling of $feemax PPM"
+
 # Amount-Definition Process
    echo -e ""
    echo -e "[AMOUNT-SELECTION PROCESS]==========================================================================================================="
@@ -240,8 +276,18 @@ fi
 # Parse parameters from the command initiation
 echo -e ""
 echo -e "[SUMMARY]==========================================================================================================================="
+if [ -z "$feemax" ]
+	then
 echo -e "Fee Attribute > \t\t $feeoption"
+	else
+echo -e "Fee Attribute > \t\t $feeoption + fee-ppm-limit Combo"
+fi
+if [ -z "$feemax" ]
+        then
 echo -e "Fee Value > \t\t\t $feevalue"
+	else
+echo -e "Fee Values > \t\t\t $feevalue + $feemax PPM limit"
+fi
 echo -e "Direction 👉Push or 👈Pull > \t $direction"
 echo -e "Amount-Definition > \t\t $amountoption $amountvalue"
 
@@ -273,7 +319,7 @@ do
         echo "All right let's f'ing go 🚀"
         echo ""
         rebalance_start
-        echo "ALL DONE ⚡ - move on Pleb!"
+        echo "ALL DONE ⚡ - WAGMI!"
         fi
 break
 done
