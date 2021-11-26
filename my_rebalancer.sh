@@ -1,7 +1,7 @@
 #!/bin/bash
 # A Rebalancing Bash script, by Hakuna
-#ToDo: ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls iv) Add Reckless Option v) Add -exclude Option
-#DONE: i) Add fee-ppm-limit && fee-factor combination
+#ToDo: ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls v) Add -exclude Option
+#DONE: i) Add fee-ppm-limit && fee-factor combination iv) Add Reckless Option
 
 #**********[HEADER / SETTINGS SECTION]***************************************************************************************************
 reblance_cycle=5  # for defined amount of parts to try rebalancing. Will be more intuitively added  in next version
@@ -269,6 +269,8 @@ if [ $amountoption == 'Defined' ]
   echo "How much do you want to $direction? Enter the absolute amount in Satoshis, eg 1000000"
   read amountvalue
   echo -e ""
+
+# Offer Reckless Mode but only when Amount is Defined
 	if [ -z "$feemax" ]
         	then
 		echo "Do you want to be >>>reckless<<< and consider economical unprofitable routes for your rebalancing?"
