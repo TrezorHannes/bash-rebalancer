@@ -66,7 +66,8 @@ rebalance_something()
   	then
 	trial_counter=1
         let a=$(( $amountvalue / $reblance_cycle ))
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a"
+#	reckless=""
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless"
 		while [ $trial_counter -le $reblance_cycle ]
   		do
 			if [ -z "$feemax" ]
@@ -224,6 +225,7 @@ else
 fi
 echo "We'll go for $feevalue"
 
+# Offer fee-ppm-limit as Ceiling Option
 if [ $feeoption == 'fee-factor' ]
 then
    echo -e ""
@@ -250,7 +252,7 @@ echo "We'll add a ceiling of $feemax PPM"
    echo -e "\tAutomated: The script will aim for 5 steps to get your channel to 50:50 balance, or 1M on either side for channels bigger > 2M satoshis"
    echo -e "\tDefined: You aim to rebalance a defined amount satoshis. It'll be divided into 5 chunks, since smaller sizes usually rebalance easier "
    echo -e ""
-   echo -e "Please note: In case you called > more than one channel to rebalance, the second option "Defined" will be tried for ALL channels given"
+   echo -e "Please note: In case you called > more than one channel to rebalance, the second option >Defined< will be tried for ALL channels given"
    echo -e ""
 
 amountoptions='Automated Defined'
@@ -266,9 +268,36 @@ if [ $amountoption == 'Defined' ]
   then
   echo "How much do you want to $direction? Enter the absolute amount in Satoshis, eg 1000000"
   read amountvalue
-  else
-  amountvalue=''
-#  break
+  echo -e ""
+	if [ -z "$feemax" ]
+        	then
+		echo "Do you want to be >>>reckless<<< and consider economical unprofitable routes for your rebalancing?"
+		echo ""
+		reckless_options='✅Yes ⛔No'
+
+		PS3='Chose wisely:'
+
+		select reckless_option in $reckless_options
+		do
+	        	if [ $reckless_option == '⛔No' ]
+		        then
+	        	        echo "kthx we play it safe"
+				reckless=""
+	                break
+#                exit 1
+	        	else
+		        echo ""
+		        echo "All right let's play it hardball - careful, this can get expensive 🥊"
+		        echo ""
+		        reckless="--reckless"
+			break
+			fi
+		done
+	else
+	reckless=""
+	fi
+else
+  amountvalue=""
 fi
 
 # Parse parameters from the command initiation
@@ -288,16 +317,36 @@ echo -e "Fee Values > \t\t\t $feevalue + $feemax PPM limit"
 fi
 echo -e "Direction 👉Push or 👈Pull > \t $direction"
 echo -e "Amount-Definition > \t\t $amountoption $amountvalue"
-
-
+if [ -n "$reckless" ]
+        then
+echo -e "Reckless Option > \t\t ENABLED"
+fi
 echo -e ""
 echo -e "Channel ID 1 > \t\t\t $parameterJ"
+if [ -n "$parameterK" ]
+	then
 echo -e "Channel ID 2 > \t\t\t $parameterK"
+fi
+if [ -n "$parameterL" ]
+        then
 echo -e "Channel ID 3 > \t\t\t $parameterL"
+fi
+if [ -n "$parameterM" ]
+        then
 echo -e "Channel ID 4 > \t\t\t $parameterM"
+fi
+if [ -n "$parameterN" ]
+        then
 echo -e "Channel ID 5 > \t\t\t $parameterN"
+fi
+if [ -n "$parameterO" ]
+        then
 echo -e "Channel ID 6 > \t\t\t $parameterO"
+fi
+if [ -n "$parameterP" ]
+        then
 echo -e "Channel ID 7 > \t\t\t $parameterP"
+fi
 echo -e "===================================================================================================================================="
 echo -e ""
 
