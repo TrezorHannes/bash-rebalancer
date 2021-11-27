@@ -27,12 +27,18 @@ $ nano bash-rebalancer/my_rebalancer.sh
 #### Syntax for one channel
 `$ ./bash-rebalancer/my_rebalancer.sh -j cidxxxxxxxxxxxxxxx`
 
+#### Syntax for one channel, excluding another
+`$ ./bash-rebalancer/my_rebalancer.sh -j cidxxxxxxxxxxxxxxx -e cidxxxxxxxxxxxxxxx`
 This command will try one _specific channel_ (j). 
 
 #### Syntax for more than one channel
 `$ ./bash-rebalancer/my_rebalancer.sh -j cidxxxxxxxxxxxxxxx -k cidxxxxxxxxxxxxxxx -l cidxxxxxxxxxxxxxxx -m cidxxxxxxxxxxxxxxx -n cidxxxxxxxxxxxxxxx -o cidxxxxxxxxxxxxxxx`
-
 This command will try to rebalance _for 6 different channels_ (j-o).
+
+#### Syntax for one channel, excluding another, dividing your fixed amount of rebalances into 15 chunks
+`$ ./bash-rebalancer/my_rebalancer.sh -j cidxxxxxxxxxxxxxxx -e cidxxxxxxxxxxxxxxx -c 15`
+smaller chunks = higher probability of success
+
 
 ### Attributes
 ```
@@ -40,6 +46,8 @@ This command will try to rebalance _for 6 different channels_ (j-o).
   - Direction push (👉) outbound or pull (👈) inbound liquidity
   - -j Single channel ID of first and required channel
   - -k to -p arguments allow for passing additional optional channels to rebalance
+  - -e exclude a specific channel ID. Only one ID is allowed at this point
+  - -c allows for specifying how many chunks your total amount of satoshis are divided into
   - Specify Automated or Defined Amount to be rebalanced
  ```
 
