@@ -1,10 +1,10 @@
 #!/bin/bash
 # A Rebalancing Bash script, by Hakuna
 #ToDo: ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls v) Add -exclude Option
-#DONE: i) Add fee-ppm-limit && fee-factor combination iv) Add Reckless Option
+#DONE: i) Add fee-ppm-limit && fee-factor combination iv) Add Reckless Option vi) added cycle-division setting
 
 #**********[HEADER / SETTINGS SECTION]***************************************************************************************************
-reblance_cycle=5  # for defined amount of parts to try rebalancing. Will be more intuitively added  in next version
+reblance_cycle=10 # Standard setting for how often your defined amount gets divided to allow for smaller rebalances = higher probability to succeed. Can be overwritten here, or via -c in the command call
 
 # 1) Validate LND directory in line 14 or 18
 # 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 15 (umbrel) or line 19 (!umbrel)
@@ -37,10 +37,11 @@ helpFunction()
    echo "Usage: $0 -j <CHAN-ID1> -k <CHAN-ID2> -l <CHAN-ID3> ..."
    echo -e "\t-j Single channel ID of first and required channel"
    echo -e "\t-k-p arguments allow for passing additional optional channels to rebalance"
+   echo -e "\t-c argument to alter the number of parts your original defined amount should get divided by. eg -c 15 divides your amount by 15 to allow for smaller rebalances"
    exit 1 # Exit script after printing help
 }
 
-while getopts "j:k:l:m:n:o:p:" opt
+while getopts "j:k:l:m:n:o:p:c:" opt
 do
    case "$opt" in
       j ) parameterJ="$OPTARG" ;;
@@ -50,6 +51,7 @@ do
       n ) parameterN="$OPTARG" ;;
       o ) parameterO="$OPTARG" ;;
       p ) parameterP="$OPTARG" ;;
+      c ) reblance_cycle="$OPTARG" ;;
       ? ) helpFunction Oben ;; # Print helpFunction in case essential parameter is non-existent
    esac
 done
@@ -66,7 +68,6 @@ rebalance_something()
   	then
 	trial_counter=1
         let a=$(( $amountvalue / $reblance_cycle ))
-#	reckless=""
 	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless"
 		while [ $trial_counter -le $reblance_cycle ]
   		do
