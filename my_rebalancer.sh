@@ -1,7 +1,7 @@
 #!/bin/bash
 # A Rebalancing Bash script, by Hakuna
-#ToDo: ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls v) Add -exclude Option
-#DONE: i) Add fee-ppm-limit && fee-factor combination iv) Add Reckless Option vi) added cycle-division setting
+#ToDo: ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls
+#DONE: i) Add fee-ppm-limit && fee-factor combination iv) Add Reckless Option vi) added cycle-division setting v) Add -exclude Option
 
 #**********[HEADER / SETTINGS SECTION]***************************************************************************************************
 reblance_cycle=10 # Standard setting for how often your defined amount gets divided to allow for smaller rebalances = higher probability to succeed. Can be overwritten here, or via -c in the command call
@@ -38,10 +38,11 @@ helpFunction()
    echo -e "\t-j Single channel ID of first and required channel"
    echo -e "\t-k-p arguments allow for passing additional optional channels to rebalance"
    echo -e "\t-c argument to alter the number of parts your original defined amount should get divided by. eg -c 15 divides your amount by 15 to allow for smaller rebalances"
+   echo -e "\t-e allows for adding a single channel-ID which should be excluded in the rebalance attempt"
    exit 1 # Exit script after printing help
 }
 
-while getopts "j:k:l:m:n:o:p:c:" opt
+while getopts "j:k:l:m:n:o:p:c:e:" opt
 do
    case "$opt" in
       j ) parameterJ="$OPTARG" ;;
@@ -52,6 +53,7 @@ do
       o ) parameterO="$OPTARG" ;;
       p ) parameterP="$OPTARG" ;;
       c ) reblance_cycle="$OPTARG" ;;
+      e ) exclude_dat="$OPTARG" ;;
       ? ) helpFunction Oben ;; # Print helpFunction in case essential parameter is non-existent
    esac
 done
@@ -62,13 +64,19 @@ then
    helpFunction
 fi
 
+if [ -n "$exclude_dat" ]
+        then
+	exclusion="--exclude $exclude_dat"
+   echo "We'll exclude Channel-ID $exclude_dat"
+fi
+
 rebalance_something()
 {
 	if [ $amountoption == 'Defined' ]
   	then
 	trial_counter=1
         let a=$(( $amountvalue / $reblance_cycle ))
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless"
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless $exclusion"
 		while [ $trial_counter -le $reblance_cycle ]
   		do
 			if [ -z "$feemax" ]
@@ -80,7 +88,7 @@ rebalance_something()
 		((trial_counter++))
 		done
   	else
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1"
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 $exclusion"
 			if [ -z "$feemax" ]
 			then
 		$rebalance_dat -p $2
@@ -323,6 +331,11 @@ echo -e "Amount-Definition > \t\t $amountoption $amountvalue"
 if [ -n "$reckless" ]
         then
 echo -e "Reckless Option > \t\t ENABLED"
+fi
+if [ -n "$exclude_dat" ]
+        then
+        exclusion="--exclude $exclude_dat"
+echo -e "We'll exclude Channel-ID \t $exclude_dat"
 fi
 echo -e ""
 echo -e "Channel ID 1 > \t\t\t $parameterJ"
