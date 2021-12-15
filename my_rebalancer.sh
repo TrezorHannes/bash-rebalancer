@@ -1,24 +1,22 @@
 #!/bin/bash
 # A Rebalancing Bash script, by Hakuna
-#ToDo: i) Add fee-ppm-limit && fee-factor combination ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls
-
+#ToDo: ii) Abort when failed route and move to next iii) Advanced / Expert mode for quick calls
+#DONE: i) Add fee-ppm-limit && fee-factor combination iv) Add Reckless Option vi) added cycle-division setting v) Add -exclude Option
 
 #**********[HEADER / SETTINGS SECTION]***************************************************************************************************
-reblance_cycle=5  # for defined amount of parts to try rebalancing. Will be more intuitively added  in next version
-# 1) In case the below LND directory doesn't work for you, add a direct link in line 20
-# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 16 (umbrel) or line 22 (!umbrel)
+reblance_cycle=10 # Standard setting for how often your defined amount gets divided to allow for smaller rebalances = higher probability to succeed. Can be overwritten here, or via -c in the command call
+
+# 1) Validate LND directory in line 14 or 18
+# 2) Secondly, alternate the path to your rebalance-lnd directory if it's not in ~/rebalance-lnd/ in line 15 (umbrel) or line 19 (!umbrel)
 
 if [ "`uname -a | grep umbrel`" != "" ]
 then
-        # LNPATH setting on umbrel
-        LNPATH="~/umbrel/lnd/"
-        RLND="/home/umbrel/rebalance-lnd/rebalance.py"
+        LNPATH="~/umbrel/lnd/" # LNPATH setting on umbrel
+        RLND="/home/umbrel/rebalance-lnd/rebalance.py" # Rebalance-lnd setting on umbrel
         umbrel=1
 else
-	#Other installations: Set your own Path to LND in case the below does not work for you
-        LNPATH="~/.lnd/"
-        #Adjust this directory in case you installed Rebalance-LND somewhere different
-        RLND="/home/admin/rebalance-lnd/rebalance.py"
+        LNPATH="~/.lnd/" # LNPATH setting for other installations
+        RLND="/home/admin/rebalance-lnd/rebalance.py" # Rebalance-lnd setting for other installations
         umbrel=0
 fi
 
@@ -39,10 +37,12 @@ helpFunction()
    echo "Usage: $0 -j <CHAN-ID1> -k <CHAN-ID2> -l <CHAN-ID3> ..."
    echo -e "\t-j Single channel ID of first and required channel"
    echo -e "\t-k-p arguments allow for passing additional optional channels to rebalance"
+   echo -e "\t-c argument to alter the number of parts your original defined amount should get divided by. eg -c 15 divides your amount by 15 to allow for smaller rebalances"
+   echo -e "\t-e allows for adding a single channel-ID which should be excluded in the rebalance attempt"
    exit 1 # Exit script after printing help
 }
 
-while getopts "j:k:l:m:n:o:p:" opt
+while getopts "j:k:l:m:n:o:p:c:e:" opt
 do
    case "$opt" in
       j ) parameterJ="$OPTARG" ;;
@@ -52,6 +52,8 @@ do
       n ) parameterN="$OPTARG" ;;
       o ) parameterO="$OPTARG" ;;
       p ) parameterP="$OPTARG" ;;
+      c ) reblance_cycle="$OPTARG" ;;
+      e ) exclude_dat="$OPTARG" ;;
       ? ) helpFunction Oben ;; # Print helpFunction in case essential parameter is non-existent
    esac
 done
@@ -62,13 +64,19 @@ then
    helpFunction
 fi
 
+if [ -n "$exclude_dat" ]
+        then
+	exclusion="--exclude $exclude_dat"
+   echo "We'll exclude Channel-ID $exclude_dat"
+fi
+
 rebalance_something()
 {
 	if [ $amountoption == 'Defined' ]
   	then
 	trial_counter=1
         let a=$(( $amountvalue / $reblance_cycle ))
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a"
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless $exclusion"
 		while [ $trial_counter -le $reblance_cycle ]
   		do
 			if [ -z "$feemax" ]
@@ -80,7 +88,7 @@ rebalance_something()
 		((trial_counter++))
 		done
   	else
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1"
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 $exclusion"
 			if [ -z "$feemax" ]
 			then
 		$rebalance_dat -p $2
@@ -226,6 +234,7 @@ else
 fi
 echo "We'll go for $feevalue"
 
+# Offer fee-ppm-limit as Ceiling Option
 if [ $feeoption == 'fee-factor' ]
 then
    echo -e ""
@@ -252,7 +261,7 @@ echo "We'll add a ceiling of $feemax PPM"
    echo -e "\tAutomated: The script will aim for 5 steps to get your channel to 50:50 balance, or 1M on either side for channels bigger > 2M satoshis"
    echo -e "\tDefined: You aim to rebalance a defined amount satoshis. It'll be divided into 5 chunks, since smaller sizes usually rebalance easier "
    echo -e ""
-   echo -e "Please note: In case you called > more than one channel to rebalance, the second option "Defined" will be tried for ALL channels given"
+   echo -e "Please note: In case you called > more than one channel to rebalance, the second option >Defined< will be tried for ALL channels given"
    echo -e ""
 
 amountoptions='Automated Defined'
@@ -268,9 +277,38 @@ if [ $amountoption == 'Defined' ]
   then
   echo "How much do you want to $direction? Enter the absolute amount in Satoshis, eg 1000000"
   read amountvalue
-  else
-  amountvalue=''
-#  break
+  echo -e ""
+
+# Offer Reckless Mode but only when Amount is Defined
+	if [ -z "$feemax" ]
+        	then
+		echo "Do you want to be >>>reckless<<< and consider economical unprofitable routes for your rebalancing?"
+		echo ""
+		reckless_options='✅Yes ⛔No'
+
+		PS3='Chose wisely:'
+
+		select reckless_option in $reckless_options
+		do
+	        	if [ $reckless_option == '⛔No' ]
+		        then
+	        	        echo "kthx we play it safe"
+				reckless=""
+	                break
+#                exit 1
+	        	else
+		        echo ""
+		        echo "All right let's play it hardball - careful, this can get expensive 🥊"
+		        echo ""
+		        reckless="--reckless"
+			break
+			fi
+		done
+	else
+	reckless=""
+	fi
+else
+  amountvalue=""
 fi
 
 # Parse parameters from the command initiation
@@ -290,16 +328,41 @@ echo -e "Fee Values > \t\t\t $feevalue + $feemax PPM limit"
 fi
 echo -e "Direction 👉Push or 👈Pull > \t $direction"
 echo -e "Amount-Definition > \t\t $amountoption $amountvalue"
-
-
+if [ -n "$reckless" ]
+        then
+echo -e "Reckless Option > \t\t ENABLED"
+fi
+if [ -n "$exclude_dat" ]
+        then
+        exclusion="--exclude $exclude_dat"
+echo -e "We'll exclude Channel-ID \t $exclude_dat"
+fi
 echo -e ""
 echo -e "Channel ID 1 > \t\t\t $parameterJ"
+if [ -n "$parameterK" ]
+	then
 echo -e "Channel ID 2 > \t\t\t $parameterK"
+fi
+if [ -n "$parameterL" ]
+        then
 echo -e "Channel ID 3 > \t\t\t $parameterL"
+fi
+if [ -n "$parameterM" ]
+        then
 echo -e "Channel ID 4 > \t\t\t $parameterM"
+fi
+if [ -n "$parameterN" ]
+        then
 echo -e "Channel ID 5 > \t\t\t $parameterN"
+fi
+if [ -n "$parameterO" ]
+        then
 echo -e "Channel ID 6 > \t\t\t $parameterO"
+fi
+if [ -n "$parameterP" ]
+        then
 echo -e "Channel ID 7 > \t\t\t $parameterP"
+fi
 echo -e "===================================================================================================================================="
 echo -e ""
 
