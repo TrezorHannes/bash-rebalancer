@@ -14,7 +14,9 @@ Optional but helpful to retrieve the right channels to rebalance
   - Add **more than one channel** to rebalance
   - Incrementally start the ratio to rebalance with **10%, 30%, 50%, 70%** and remainder ratio to rebalance
   - For < 2M sats channels, the script will strive to achieve a 50:50 ratio. For > 2M Channel size, it'll aim to get 1M at either side
-  - Alternatively, it allows to set a fixed amount of satoshis, and tries that _amount_ divided into 5 attempts for every selected channel
+  - Alternatively, it allows to set a fixed amount of satoshis, and tries that _amount_ divided into a set amount of attempts for every selected channel
+  - Allows a PPM-limit ceiling for Fee-Factor, to avoid rebalancing high PPM sets by charge-lnd
+  - Offers 'Reckless'-Mode, ignoring profitability settings
 
 ### Installation
 ```
@@ -38,7 +40,6 @@ This command will try to rebalance _for 6 different channels_ (j-o).
 #### Syntax for one channel, excluding another, dividing your fixed amount of rebalances into 15 chunks
 `$ ./bash-rebalancer/my_rebalancer.sh -j cidxxxxxxxxxxxxxxx -e cidxxxxxxxxxxxxxxx -c 15`
 smaller chunks = higher probability of success
-
 
 ### Attributes
 ```
