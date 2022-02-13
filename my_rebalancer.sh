@@ -39,10 +39,11 @@ helpFunction()
    echo -e "\t-k-p arguments allow for passing additional optional channels to rebalance"
    echo -e "\t-c argument to alter the number of parts your original defined amount should get divided by. eg -c 15 divides your amount by 15 to allow for smaller rebalances"
    echo -e "\t-e allows for adding a single channel-ID which should be excluded in the rebalance attempt"
+   echo -e "\t-f allows for adding a 2nd single channel-ID which should be excluded in the rebalance attempt"
    exit 1 # Exit script after printing help
 }
 
-while getopts "j:k:l:m:n:o:p:c:e:" opt
+while getopts "j:k:l:m:n:o:p:c:e:f:" opt
 do
    case "$opt" in
       j ) parameterJ="$OPTARG" ;;
@@ -54,6 +55,7 @@ do
       p ) parameterP="$OPTARG" ;;
       c ) reblance_cycle="$OPTARG" ;;
       e ) exclude_dat="$OPTARG" ;;
+      f ) exclude_dat2="$OPTARG" ;;
       ? ) helpFunction Oben ;; # Print helpFunction in case essential parameter is non-existent
    esac
 done
@@ -70,25 +72,31 @@ if [ -n "$exclude_dat" ]
    echo "We'll exclude Channel-ID $exclude_dat"
 fi
 
+if [ -n "$exclude_dat2" ]
+        then
+        exclusion2="--exclude $exclude_dat2"
+   echo "We'll also exclude Channel-ID $exclude_dat2"
+fi
+
 rebalance_something()
 {
 	if [ $amountoption == 'Defined' ]
   	then
 	trial_counter=1
         let a=$(( $amountvalue / $reblance_cycle ))
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless $exclusion"
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless $exclusion $exclusion2"
 		while [ $trial_counter -le $reblance_cycle ]
   		do
 			if [ -z "$feemax" ]
 			then
-		$rebalance_dat
+			$rebalance_dat
 			else
-		$rebalance_dat --fee-ppm-limit $feemax
+			$rebalance_dat --fee-ppm-limit $feemax
 			fi
 		((trial_counter++))
 		done
   	else
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 $exclusion"
+	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 $exclusion $exclusion2"
 			if [ -z "$feemax" ]
 			then
 		$rebalance_dat -p $2
@@ -334,8 +342,13 @@ echo -e "Reckless Option > \t\t ENABLED"
 fi
 if [ -n "$exclude_dat" ]
         then
-        exclusion="--exclude $exclude_dat"
+#        exclusion="--exclude $exclude_dat"
 echo -e "We'll exclude Channel-ID \t $exclude_dat"
+fi
+if [ -n "$exclude_dat2" ]
+        then
+#        exclusion2="--exclude $exclude_dat2"
+echo -e "We'll also exclude Channel-ID \t $exclude_dat2"
 fi
 echo -e ""
 echo -e "Channel ID 1 > \t\t\t $parameterJ"
