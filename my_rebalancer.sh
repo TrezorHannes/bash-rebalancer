@@ -16,7 +16,7 @@ then
         umbrel=1
 else
         LNPATH="~/.lnd/" # LNPATH setting for other installations
-        RLND="/home/admin/rebalance-lnd/rebalance.py" # Rebalance-lnd setting for other installations
+        RLND="/home/admin/nvme/rebalance-lnd/rebalance.py" # Rebalance-lnd setting for other installations
         umbrel=0
 fi
 
@@ -84,7 +84,7 @@ rebalance_something()
   	then
 	trial_counter=1
         let a=$(( $amountvalue / $reblance_cycle ))
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless $exclusion $exclusion2"
+	rebalance_dat="python3 $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 -a $a $reckless $exclusion $exclusion2"
 		while [ $trial_counter -le $reblance_cycle ]
   		do
 			if [ -z "$feemax" ]
@@ -96,7 +96,7 @@ rebalance_something()
 		((trial_counter++))
 		done
   	else
-	rebalance_dat="python $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 $exclusion $exclusion2"
+	rebalance_dat="python3 $RLND --lnddir $LNPATH --$feeoption $feevalue -$directionabrv $1 $exclusion $exclusion2"
 			if [ -z "$feemax" ]
 			then
 		$rebalance_dat -p $2
