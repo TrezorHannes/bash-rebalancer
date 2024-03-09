@@ -16,7 +16,7 @@ then
         umbrel=1
 else
         LNPATH="~/.lnd/" # LNPATH setting for other installations
-        RLND="/home/admin/nvme/rebalance-lnd/rebalance.py" # Rebalance-lnd setting for other installations
+        RLND="/home/admin/tools/rebalance-lnd/rebalance.py" # Rebalance-lnd setting for other installations
         umbrel=0
 fi
 
